@@ -1,5 +1,6 @@
 package com.example.tripadvisor.model;
 
+import com.example.tripadvisor.entity.Destination;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

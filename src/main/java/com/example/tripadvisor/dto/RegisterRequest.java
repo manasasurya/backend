@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@lombok.Getter
+@lombok.Setter
 public class RegisterRequest {
     private String name;
     private String email;

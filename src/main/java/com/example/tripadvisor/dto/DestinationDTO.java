@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@lombok.Getter
+@lombok.Setter
 public class DestinationDTO {
     private Long id;
     private String name;

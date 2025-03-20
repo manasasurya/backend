@@ -29,8 +29,14 @@ public class AuthenticationService {
                 throw new RuntimeException("Email already exists");
             }
 
-            // Set default role if not provided
-            Role userRole = (request.getRole() != null) ? request.getRole() : Role.USER;
+            // Handle role assignment
+            Role userRole;
+            try {
+                userRole = (request.getRole() != null) ? Role.valueOf(request.getRole().toString()) : Role.USER;
+            } catch (IllegalArgumentException e) {
+                // If role string doesn't match enum, default to USER
+                userRole = Role.USER;
+            }
             System.out.println("Assigning role: " + userRole);
 
             var user = User.builder()
@@ -45,9 +51,11 @@ public class AuthenticationService {
 
             var jwtToken = jwtService.generateToken(user);
             System.out.println("Generated JWT token");
+            System.out.println("User role: " + user.getRole());
 
             return AuthResponse.builder()
                     .token(jwtToken)
+                    .role("ROLE_" + user.getRole().name())
                     .build();
         } catch (Exception e) {
             System.err.println("Registration error: " + e.getMessage());
@@ -66,8 +74,10 @@ public class AuthenticationService {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
+        System.out.println("User role during login: " + user.getRole());
         return AuthResponse.builder()
                 .token(jwtToken)
+                .role("ROLE_" + user.getRole().name())
                 .build();
     }
 }

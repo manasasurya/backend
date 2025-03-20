@@ -17,16 +17,51 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(
-            @RequestBody RegisterRequest request
-    ) {
-        return ResponseEntity.ok(authenticationService.register(request));
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        try {
+            System.out.println("Received registration request for email: " + request.getEmail());
+            System.out.println("Role from request: " + request.getRole());
+            
+            // Validate request
+            if (request.getName() == null || request.getName().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Name is required");
+            }
+            if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Email is required");
+            }
+            if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Password is required");
+            }
+            
+            AuthResponse response = authenticationService.register(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("Error during registration: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> authenticate(
-            @RequestBody AuthRequest request
-    ) {
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+    public ResponseEntity<?> authenticate(@RequestBody AuthRequest request) {
+        try {
+            System.out.println("Received login request for email: " + request.getEmail());
+            
+            // Validate request
+            if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Email is required");
+            }
+            if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Password is required");
+            }
+            
+            AuthResponse response = authenticationService.authenticate(request);
+            System.out.println("Login successful for user: " + request.getEmail());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("Error during login: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
